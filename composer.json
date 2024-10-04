@@ -1,0 +1,19 @@
+{
+    "name": "eudes/ipm-todo-api",
+    "version": "1.0.0",
+    "description": "Just a simple todo api",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Eudes Silva",
+            "email": "eudes.vss@gmail.com"
+        }
+    ],
+    "require": {}
+}
