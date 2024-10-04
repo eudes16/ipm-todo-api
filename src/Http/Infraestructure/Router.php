@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Infraestructure;
 
-use App\Commons\Context;
+use App\Shared\Context;
 use App\Http\Constants\HttpCodes;
 use App\Http\Constants\HttpMethods;
 use App\Http\Domain\RouterInterface;
@@ -72,7 +74,7 @@ class Router implements RouterInterface
     {
         $this->register($route, HttpMethods::POST, $action);
     }
-    
+
     /**
      * Register a PUT route.
      * @param string $route The route to register.
@@ -83,7 +85,7 @@ class Router implements RouterInterface
     {
         $this->register($route, HttpMethods::PUT, $action);
     }
-    
+
     /**
      * Register a DELETE route.
      * @param string $route The route to register.
@@ -138,6 +140,12 @@ class Router implements RouterInterface
 
                 // Merge route params and query params
                 $routeParams = array_merge($routeParams, $queryParamans);
+
+                // Get Json post data
+                $post = file_get_contents("php://input");
+                $post = json_decode($post, true) ?? [];
+
+                $routeParams = array_merge($routeParams, $post);
 
                 // Create a DataRequest object with the request method, requested route and route params.
                 $dataRequest = new DataRequest($_SERVER['REQUEST_METHOD'], $requestedRoute, $routeParams);

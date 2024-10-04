@@ -1,6 +1,10 @@
 <?php 
 
+declare(strict_types=1);
+
 namespace App\Http\Infraestructure;
+
+use App\Http\Constants\HttpCodes;
 
 /**
  * Class DataResponse - Represents the data of a response.
@@ -42,5 +46,23 @@ class DataResponse {
             'message' => $this->message
         ]);
         return;
+    }
+
+    public static function notImplemented() {
+        return new DataResponse(
+            [
+                "message" => "Not implemented"
+            ],
+            HttpCodes::BAD_REQUEST
+        );
+    }
+
+    public static function notFound() {
+        return new DataResponse(
+            [
+                "message" => "Not found"
+            ],
+            HttpCodes::NOT_FOUND
+        );
     }
 }

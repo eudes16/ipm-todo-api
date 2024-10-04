@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Domain;
 
-use App\Commons\Context;
+use App\Shared\Context;
 use App\Http\Infraestructure\DataRequest;
 use App\Http\Infraestructure\DataResponse;
 

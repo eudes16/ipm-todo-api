@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Config;
 
-use App\Commons\Context;
+use App\Shared\Context;
 use App\Http\Domain\RouterInterface;
-use App\Http\Infrastructure\Router;
 
 class Application
 {
@@ -21,7 +22,17 @@ class Application
 
     public function run()
     {
-        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        try {
+            // Instantiate the database connection and add it to the context.
+            $db = Database::getInstance();
+            $con = $db->connect($this->context->database);
+            $this->context->setConnection($con);
+
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+            exit;
+        }
+
         $this->router->dispatch($this->context); 
     }
 }
