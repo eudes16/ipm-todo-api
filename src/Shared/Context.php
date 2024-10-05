@@ -31,7 +31,8 @@ class Context {
             'port' => $envs['DATABASE_PORT'],
             'user' => $envs['DATABASE_USER'],
             'password' => $envs['DATABASE_PASSWORD'],
-            'database' => $envs['DATABASE_NAME']
+            'database' => $envs['DATABASE_NAME'],
+            'log_level' => $envs['DATABASE_LOG_LEVEL']
         ];
     }
 
@@ -41,5 +42,9 @@ class Context {
 
     public function getConnection() {
         return $this->connection;
+    }
+
+    public function getDatabaseDebugLevel() {
+        return $this->database['log_level'];
     }
 }

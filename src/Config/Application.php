@@ -6,6 +6,7 @@ namespace App\Config;
 
 use App\Shared\Context;
 use App\Http\Domain\RouterInterface;
+use App\Http\Infraestructure\DataResponse;
 
 class Application
 {
@@ -24,13 +25,12 @@ class Application
     {
         try {
             // Instantiate the database connection and add it to the context.
-            $db = Database::getInstance();
+            $db = Database::getInstance(); 
             $con = $db->connect($this->context->database);
             $this->context->setConnection($con);
 
         } catch (\Exception $e) {
-            echo $e->getMessage();
-            exit;
+            return DataResponse::internalServerError();
         }
 
         $this->router->dispatch($this->context); 

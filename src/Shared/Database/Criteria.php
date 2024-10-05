@@ -110,9 +110,22 @@ class Criteria implements CriteriaInterface
             return '';
         }
 
-
         if ($operator == CriteriaOperatorEnum::IS_NULL || $operator == CriteriaOperatorEnum::IS_NOT_NULL) {
             $criteria = "$field $operatorValue";
+        } elseif ($operator == CriteriaOperatorEnum::BETWEEN || $operator == CriteriaOperatorEnum::NOT_BETWEEN) {
+            $criteria = "$field $operatorValue :$field AND :$field";
+        } elseif ($operator == CriteriaOperatorEnum::IN || $operator == CriteriaOperatorEnum::NOT_IN) {
+            $bindString = [];
+            $value = explode(',', $this->value);
+
+            foreach ($value as $key => $val) {
+                $bindString[] = ":{$field}$key";
+            }
+
+            $bindString = "(" . implode(', ', $bindString) . ")";
+            $criteria = "$field $operatorValue $bindString";
+            
+            $this->value = explode(',', $this->value);
         } else {
             $criteria = "$field $operatorValue :$field";
         }

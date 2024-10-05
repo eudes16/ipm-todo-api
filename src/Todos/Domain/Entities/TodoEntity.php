@@ -12,9 +12,9 @@ class TodoEntity
     private bool $status;
     private string $createdAt;
     private string $updatedAt;
-    private string $conclusionDate;
+    private string $dueDate;
 
-    public function __construct(string $id, string $title, string $description, bool $status, string $createdAt, string $updatedAt, string $conclusionDate)
+    public function __construct(string $id, string $title, string $description, bool $status, string $createdAt, string $updatedAt, string $dueDate)
     {
         $this->id = $id;
         $this->title = $title;
@@ -22,14 +22,7 @@ class TodoEntity
         $this->status = $status;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
-        $this->conclusionDate = $conclusionDate;
-        $this->id = $id;
-        $this->title = $title;
-        $this->description = $description;
-        $this->status = $status;
-        $this->createdAt = $createdAt;
-        $this->updatedAt = $updatedAt;
-        $this->conclusionDate = $conclusionDate;
+        $this->dueDate = $dueDate;
     }
 
     public function getId(): string
@@ -62,9 +55,9 @@ class TodoEntity
         return $this->updatedAt;
     }
 
-    public function getConclusionDate(): string
+    public function getDueDate(): string
     {
-        return $this->conclusionDate;
+        return $this->dueDate;
     }
 
     public function toArray(): array
@@ -76,7 +69,7 @@ class TodoEntity
             'status' => $this->status,
             'created_at' => $this->createdAt,
             'updated_at' => $this->updatedAt,
-            'conclusion_date' => $this->conclusionDate,
+            'due_date' => $this->dueDate,
         ];
     }
 
@@ -89,7 +82,7 @@ class TodoEntity
             $data['status'],
             $data['created_at'],
             $data['updated_at'],
-            $data['conclusion_date']
+            $data['due_date']
         );
     }
 }

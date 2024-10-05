@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Todos\Usecases;
+
+use App\Shared\Context;
+use App\Shared\Domain\CrudRepositoryInterface;
+use App\Shared\Domain\RepositoryInterface;
+use App\Shared\Domain\UsecaseInterface;
+use App\Shared\Exceptions\FieldNotFoundException;
+use App\Shared\Exceptions\RecordNotFoundException;
+
+class TodosUpdateUsecase implements UsecaseInterface
+{
+    public function __construct(
+        private RepositoryInterface | CrudRepositoryInterface $repository,
+        private Context $context,
+        private $request
+    ) {
+        $this->validate();
+    }
+
+    public function validate(): void
+    {
+        $data = $this->request->data;
+        if (!isset($data['id'])) {
+            throw new FieldNotFoundException("Id is required");
+        }
+        return;
+    }
+
+    public function execute(): array
+    {
+        $result = [];
+        try {
+            $findResult = $this->repository->find(['id' => (int) $this->request->data['id']]);
+
+            if (!isset($findResult[1]) || $findResult[1] === 0) {
+                throw new RecordNotFoundException("Record not found");
+            }
+
+            $result = $this->repository->update($this->request->data);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+        return $result;
+    }
+}

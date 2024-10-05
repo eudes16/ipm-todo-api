@@ -39,7 +39,7 @@ class DataResponse {
      */
     private function json() {
         header('Content-Type: application/json; charset=utf-8'); 
-
+        http_response_code($this->code);
         echo json_encode([
             'data' => $this->data,
             'code' => $this->code,
@@ -49,20 +49,56 @@ class DataResponse {
     }
 
     public static function notImplemented() {
+        http_response_code(HttpCodes::BAD_REQUEST);
         return new DataResponse(
-            [
-                "message" => "Not implemented"
-            ],
-            HttpCodes::BAD_REQUEST
+            null,
+            HttpCodes::BAD_REQUEST,
+            "Not implemented"
         );
     }
 
     public static function notFound() {
+        http_response_code(HttpCodes::NOT_FOUND);
         return new DataResponse(
-            [
-                "message" => "Not found"
-            ],
-            HttpCodes::NOT_FOUND
+            null,
+            HttpCodes::NOT_FOUND,
+            "Not found"
+        );
+    }
+
+    public static function badRequest() {
+        http_response_code(HttpCodes::BAD_REQUEST);
+        return new DataResponse(
+            null,
+            HttpCodes::BAD_REQUEST,
+            "Bad request"
+        );
+    }
+
+    public static function unauthorized() {
+        http_response_code(HttpCodes::UNAUTHORIZED);
+        return new DataResponse(
+            null,
+            HttpCodes::UNAUTHORIZED,
+            "Unauthorized"
+        );
+    }
+
+    public static function forbidden() {
+        http_response_code(HttpCodes::FORBIDDEN);
+        return new DataResponse(
+            null,
+            HttpCodes::FORBIDDEN,
+            "Forbidden"
+        );
+    }
+
+    public static function internalServerError() {
+        http_response_code(HttpCodes::INTERNAL_SERVER_ERROR);
+        return new DataResponse(
+            null,
+            HttpCodes::INTERNAL_SERVER_ERROR,
+            "Internal server error"
         );
     }
 }

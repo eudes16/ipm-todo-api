@@ -12,7 +12,9 @@ use App\Http\Infraestructure\DataResponse;
 use App\Shared\Context;
 use App\Todos\Infraestructure\TodosRepository;
 use App\Todos\Usecases\TodosCreateUsecase;
+use App\Todos\Usecases\TodosDeleteUsecase;
 use App\Todos\Usecases\TodosFindUsecase;
+use App\Todos\Usecases\TodosUpdateUsecase;
 
 /**
  * Class TodoController - Represents the controller of the Todo entity.
@@ -25,7 +27,7 @@ class TodosController implements CrudControllerInterface
     {
 
         try {
-            $usecase = new TodosFindUsecase(new TodosRepository($context->getConnection()), $context, $request);
+            $usecase = new TodosFindUsecase(new TodosRepository($context), $context, $request);
             $result = $usecase->execute();
             return new DataResponse(
                 $result,
@@ -49,7 +51,7 @@ class TodosController implements CrudControllerInterface
     public function create(DataRequest $request, Context $context): DataResponse
     {
         try {
-            $usecase = new TodosCreateUsecase(new TodosRepository($context->getConnection()), $context, $request);
+            $usecase = new TodosCreateUsecase(new TodosRepository($context), $context, $request);
             $result = $usecase->execute();
             return new DataResponse(
                 $result,
@@ -57,10 +59,9 @@ class TodosController implements CrudControllerInterface
             );
         } catch (\Throwable $th) {
             return new DataResponse(
-                [
-                    "message" => $th->getMessage()
-                ],
-                HttpCodes::BAD_REQUEST
+                null,
+                HttpCodes::BAD_REQUEST,
+                $th->getMessage()
             );
         }
 
@@ -69,7 +70,21 @@ class TodosController implements CrudControllerInterface
 
     public function update(DataRequest $request, Context $context): DataResponse
     {
-        return DataResponse::notImplemented();
+        try {
+            $usecase = new TodosUpdateUsecase(new TodosRepository($context), $context, $request);
+            $result = $usecase->execute();
+            return new DataResponse(
+                $result,
+                HttpCodes::OK
+            );
+        } catch (\Throwable $th) {
+            return new DataResponse(
+                null,
+                HttpCodes::BAD_REQUEST,
+                $th->getMessage()
+            );
+        }
+        return DataResponse::notFound();
     }
 
     public function edit(DataRequest $request, Context $context): DataResponse
@@ -80,6 +95,19 @@ class TodosController implements CrudControllerInterface
 
     public function delete(DataRequest $request, Context $context): DataResponse
     {
-        return DataResponse::notImplemented();
+        try {
+            $usecase = new TodosDeleteUsecase(new TodosRepository($context), $context, $request);
+            $result = $usecase->execute();
+            return new DataResponse(
+                $result,
+                HttpCodes::OK
+            );
+        } catch (\Throwable $th) {
+            return new DataResponse(
+                null,
+                HttpCodes::BAD_REQUEST,
+                $th->getMessage()
+            );
+        }
     }
 }

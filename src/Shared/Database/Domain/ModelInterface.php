@@ -32,8 +32,9 @@ interface ModelInterface
     public function get(): array;
     public function first(): array;
     public function find(int $id): array;
-    public function insert(array $insertValues): bool;
+    public function insert(array $insertValues): array;
     public function delete(int $id): bool;
-    public function update(int $id, array $updateValues): bool;
+    public function update(int $id, array $updateValues): array;
+    public function count(): int;
 
 }

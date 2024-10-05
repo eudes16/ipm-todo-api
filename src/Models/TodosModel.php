@@ -20,8 +20,8 @@ class TodosModel extends Model
         'updated_at',
     ];
 
-    public function __construct($connection)
+    public function __construct($context)
     {
-        parent::__construct($connection);
+        parent::__construct($context);
     }
 }

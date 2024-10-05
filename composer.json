@@ -9,6 +9,9 @@
             "App\\": "src/"
         }
     },
+    "scripts": {
+        "server": "php -S localhost:8081 -t public"
+    },
     "authors": [
         {
             "name": "Eudes Silva",
