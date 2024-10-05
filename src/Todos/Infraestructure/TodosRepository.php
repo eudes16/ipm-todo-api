@@ -81,33 +81,49 @@ class TodosRepository implements RepositoryInterface
 
         $todosModel = new TodosModel($this->context);
         $countResult = $todosModel->where($where)->count();
-        $result = $todosModel->select(["*"])->where($where)->get();
-            
+
+        list($limit, $offset) = $this->resolvePagination();
+
+        $result = $todosModel->select(["*"])->where($where)->limit($limit)->offset($offset)->get();
+
         return [$result, $countResult];
     }
 
-    public function create(array $todo): array 
+    public function create(array $todo): array
     {
         $model = new TodosModel($this->context);
         $result = $model->insert($todo);
-        return $result; 
+        return $result;
     }
 
-    public function update(array $todo): array 
+    public function update(array $todo): array
     {
         $id = (int) $todo['id'];
 
         $model = new TodosModel($this->context);
         $result = $model->update($id, $todo);
-        return $result; 
+        return $result;
     }
 
-    public function delete(array $todo): bool 
+    public function delete(array $todo): bool
     {
         $id = (int) $todo['id'];
 
         $model = new TodosModel($this->context);
         $result = $model->delete($id);
-        return $result; 
+        return $result;
+    }
+
+    private function resolvePagination(): array
+    {
+
+        $paginationData = $this->context->session['pagination'] ?? [];
+
+        $page = isset($paginationData['page']) ? (int) $paginationData['page'] : 1;
+        $limit = isset($paginationData['limit']) ? (int) $paginationData['limit'] : 10;
+
+        $offset = ($page - 1) * $limit;
+
+        return [$limit, $offset];
     }
 }

@@ -138,12 +138,23 @@ class Router implements RouterInterface
                 $routeParams = array_combine($routeParamsNames, $routeParamsValues);
                 $queryParamans = $_REQUEST;
 
+                if (isset($queryParamans['page'])) {
+                    $context->session['pagination']['page'] = $queryParamans['page'];
+                    unset($queryParamans['page']);
+                }
+
+                if (isset($queryParamans['limit'])) {
+                    $context->session['pagination']['limit'] = $queryParamans['limit'];
+                    unset($queryParamans['limit']);
+                }
+
                 // Merge route params and query params
                 $routeParams = array_merge($routeParams, $queryParamans);
 
                 // Get Json post data
                 $post = file_get_contents("php://input");
                 $post = json_decode($post, true) ?? [];
+
 
                 $routeParams = array_merge($routeParams, $post);
 

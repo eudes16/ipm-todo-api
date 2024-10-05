@@ -16,6 +16,12 @@ class Context {
      */
     public $database;
 
+    /**
+     * Session data
+     * @var array
+     */
+    public $session;
+
     protected $connection;
 
     public function __construct($envs) {

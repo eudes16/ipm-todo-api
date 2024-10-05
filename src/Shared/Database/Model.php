@@ -20,7 +20,9 @@ class Model implements ModelInterface
     protected array $columns = ['*'];
     protected array $where = [];
     protected string $orderBy = '';
-    protected int $limit = 0;
+    protected int $limit = 10;
+    protected int $offset = 1;
+    private bool $isCount = false;
     protected string $selectSql = '';
     protected string $insertSql = '';
     protected string $updateSql = '';
@@ -55,7 +57,9 @@ class Model implements ModelInterface
 
     public function count(): int
     {
+        $this->isCount = true;
         $selectCount = $this->select(['COUNT(*) as total'])->get();
+        
         if (count($selectCount) > 0) {
             return (int) $selectCount[0]['total'];
         }
@@ -95,6 +99,12 @@ class Model implements ModelInterface
         return $this;
     }
 
+    public function offset(int $offset): ModelInterface
+    {
+        $this->offset = $offset;
+        return $this;
+    }
+
     public function get(): array
     {
         try {
@@ -104,9 +114,14 @@ class Model implements ModelInterface
 
             $orderBy = $this->orderBy ? " ORDER BY $this->orderBy" : '';
 
-            $limit = $this->limit ? " LIMIT $this->limit" : '';
+            $limit = '';
+            $offset = '';
+            if (!$this->isCount) {
+                $limit = $this->limit ? " LIMIT $this->limit" : '';
+                $offset = $this->offset ? " OFFSET $this->offset" : '';
+            }
 
-            $sql = "SELECT $columns FROM $this->tableName$where$orderBy$limit";
+            $sql = "SELECT $columns FROM $this->tableName$where$orderBy$limit$offset";
             $this->selectSql = $sql;
 
             $stmt = $this->connection->prepare($sql);
@@ -347,7 +362,7 @@ class Model implements ModelInterface
         $this->columns = ['*'];
         $this->where = [];
         $this->orderBy = '';
-        $this->limit = 0;
+        $this->isCount = false;
         $this->insertValues = [];
         $this->updateValues = [];
         $this->deleteValues = [];

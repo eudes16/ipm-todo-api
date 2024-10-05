@@ -29,6 +29,7 @@ interface ModelInterface
     public function where(array ...$where): ModelInterface;
     public function orderBy(array $column): ModelInterface;
     public function limit(int $limit): ModelInterface;
+    public function offset(int $offset): ModelInterface;
     public function get(): array;
     public function first(): array;
     public function find(int $id): array;
