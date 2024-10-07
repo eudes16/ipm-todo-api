@@ -28,6 +28,11 @@ class TodosRepository implements RepositoryInterface
             $where = array_merge($where, (new Criteria('id', $value))->resolve());
         }
 
+        if (isset($filters['id_in'])) {
+            $value = $filters['id_in'];
+            $where = array_merge($where, (new Criteria('id', $value, CriteriaOperatorEnum::IN))->resolve());
+        }
+
         if (isset($filters['title_eq']) || isset($filters['title'])) {
             $value = $filters['title_eq'] ?? $filters['title'];
             $where = array_merge($where, (new Criteria('title', $value))->resolve());
@@ -140,9 +145,14 @@ class TodosRepository implements RepositoryInterface
         $orderData = $this->context->session['order'] ?? [];
 
         foreach ($orderData as $key => $value) {
-            $order = explode('_', $value);
-            $orientation = $order[1] ?? 'ASC';
-            $parsedOrder[] = "{$order[0]} {$orientation}";
+            $orientation = 'ASC';
+            // check if  ends with _asc or _desc remve it and set the orientation
+            if (preg_match('/_asc$|_desc$/', $value)) {
+                $orientation = substr($value, -4) === '_asc' ? 'ASC' : 'DESC';
+                $value = substr($value, 0, -5);
+            }
+
+            $parsedOrder[] = "{$value} {$orientation}";
         }
 
 
