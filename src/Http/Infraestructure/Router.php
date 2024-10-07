@@ -148,6 +148,11 @@ class Router implements RouterInterface
                     unset($queryParamans['limit']);
                 }
 
+                if (isset($queryParamans['order'])) {
+                    $context->session['order'] = explode(',', $queryParamans['order']);
+                    unset($queryParamans['order']);
+                }
+
                 // Merge route params and query params
                 $routeParams = array_merge($routeParams, $queryParamans);
 

@@ -20,7 +20,7 @@ class Model implements ModelInterface
     protected array $columns = ['*'];
     protected array $where = [];
     protected string $orderBy = '';
-    protected int $limit = 10;
+    protected int $limit = 0;
     protected int $offset = 1;
     private bool $isCount = false;
     protected string $selectSql = '';
@@ -117,7 +117,7 @@ class Model implements ModelInterface
             $limit = '';
             $offset = '';
             if (!$this->isCount) {
-                $limit = $this->limit ? " LIMIT $this->limit" : '';
+                $limit = $this->limit > 0 ? " LIMIT $this->limit" : '';
                 $offset = $this->offset ? " OFFSET $this->offset" : '';
             }
 

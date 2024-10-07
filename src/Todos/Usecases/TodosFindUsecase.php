@@ -31,9 +31,7 @@ class TodosFindUsecase implements UsecaseInterface
     {
         $result = [];
         try {
-            [$result, $count] = $this->repository->find($this->request->data);
-
-            
+            $result = $this->repository->find($this->request->data);
         } catch (\Throwable $th) {
             throw $th;
         }

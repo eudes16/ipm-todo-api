@@ -82,9 +82,16 @@ class TodosRepository implements RepositoryInterface
         $todosModel = new TodosModel($this->context);
         $countResult = $todosModel->where($where)->count();
 
+        $order = $this->resolveOrder();
+
         list($limit, $offset) = $this->resolvePagination();
 
-        $result = $todosModel->select(["*"])->where($where)->limit($limit)->offset($offset)->get();
+        $result = $todosModel->select(["*"])
+            ->where($where)
+            ->orderBy($order)
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
 
         return [$result, $countResult];
     }
@@ -120,10 +127,25 @@ class TodosRepository implements RepositoryInterface
         $paginationData = $this->context->session['pagination'] ?? [];
 
         $page = isset($paginationData['page']) ? (int) $paginationData['page'] : 1;
-        $limit = isset($paginationData['limit']) ? (int) $paginationData['limit'] : 10;
+        $limit = isset($paginationData['limit']) ? (int) $paginationData['limit'] : 0;
 
         $offset = ($page - 1) * $limit;
 
         return [$limit, $offset];
+    }
+
+    private function resolveOrder(): array
+    {
+        $parsedOrder = [];
+        $orderData = $this->context->session['order'] ?? [];
+
+        foreach ($orderData as $key => $value) {
+            $order = explode('_', $value);
+            $orientation = $order[1] ?? 'ASC';
+            $parsedOrder[] = "{$order[0]} {$orientation}";
+        }
+
+
+        return $parsedOrder;
     }
 }

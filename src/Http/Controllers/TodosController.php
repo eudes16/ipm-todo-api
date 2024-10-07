@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Constants\HttpCodes;
-use App\Http\Domain\ControllerInterface;
 use App\Http\Domain\CrudControllerInterface;
 use App\Http\Infraestructure\DataRequest;
 use App\Http\Infraestructure\DataResponse;
@@ -28,17 +27,18 @@ class TodosController implements CrudControllerInterface
 
         try {
             $usecase = new TodosFindUsecase(new TodosRepository($context), $context, $request);
-            $result = $usecase->execute();
+            [$result, $count] = $usecase->execute();
             return new DataResponse(
                 $result,
-                HttpCodes::OK
+                HttpCodes::OK,
+                '',
+                $this->resolvePagination($count, $context)
             );
         } catch (\Throwable $th) {
             return new DataResponse(
-                [
-                    "message" => $th->getMessage()
-                ],
-                HttpCodes::BAD_REQUEST
+                [],
+                HttpCodes::BAD_REQUEST,
+                $th->getMessage()
             );
         }
     }
@@ -110,4 +110,30 @@ class TodosController implements CrudControllerInterface
             );
         }
     }
+
+    public function resolvePagination(int $count, Context $context)
+    {
+
+        $paginationData =  $context->session['pagination'] ?? [];
+        
+        if (count($paginationData) === 0) {
+            return null;
+        }
+
+        $paginationData['limit'] = (int) $paginationData['limit'];
+        $paginationData['total'] = (int) $count;
+        
+        if (isset($paginationData['page'])) {
+            $paginationData['page'] = (int) $paginationData['page'];
+        } else {
+            $paginationData['page'] = 1;
+        }
+
+        $paginationData['pages'] = ceil($count / $paginationData['limit']);
+        $paginationData['next'] = $paginationData['page'] < $paginationData['pages'] ? $paginationData['page'] + 1 : null;
+        $paginationData['prev'] = $paginationData['page'] > 1 ? ($paginationData['page'] - 1) : null;
+        return $paginationData;
+    }
 }
+
+

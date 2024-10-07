@@ -126,6 +126,10 @@ class Criteria implements CriteriaInterface
             $criteria = "$field $operatorValue $bindString";
             
             $this->value = explode(',', $this->value);
+        } elseif ($operator == CriteriaOperatorEnum::LIKE) {
+            $this->value = "%{$this->value}%";
+            $criteria = "$field $operatorValue :$field";
+        
         } else {
             $criteria = "$field $operatorValue :$field";
         }

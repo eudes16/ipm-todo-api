@@ -26,10 +26,13 @@ class DataResponse {
      */
     public string $message;
 
-    public function __construct($data, $code, $message = '') {
+    public $pagination;
+
+    public function __construct($data, $code, $message = '', $pagination = null) {
         $this->data = $data;
         $this->code = $code;
         $this->message = $message;
+        $this->pagination = $pagination;
         $this->json();
     }
 
@@ -40,11 +43,17 @@ class DataResponse {
     private function json() {
         header('Content-Type: application/json; charset=utf-8'); 
         http_response_code($this->code);
-        echo json_encode([
+        $response = [
             'data' => $this->data,
             'code' => $this->code,
-            'message' => $this->message
-        ]);
+            'message' => $this->message,
+        ];
+
+        if ($this->pagination) {
+            $response['pagination'] = $this->pagination;
+        }
+
+        echo json_encode($response);
         return;
     }
 
